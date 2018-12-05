@@ -1,0 +1,17 @@
+# Emacs backup files
+*~
+*#
+.#*
+# Vim file artifacts
+.*.sw*
+*.ser
+*.iml
+# installed platform-specific binaries
+/bin
+/config
+/build
+/out
+.idea
+.gradle
+.DS_Store
+.project
