@@ -125,7 +125,7 @@ gradle run --args='vin123'
 14:15:41.859 [main] INFO trivadis.vehicle.Vehicle - response code 200
 ```
 
-##Conclusion
+## Conclusion
 
 Implementing a whole show case with Hyperledger Fabric (HF) was quite a deep dive into blockchain and the architecture of HF. There are quite some features which are not standard on a public blockchain like Ethereum or EOS such as *Private Data* and *Identity* Mixer (Zero Knowledge Proof of Identity). 
 HF is quite mature when it comes to 
