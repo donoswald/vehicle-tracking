@@ -1,0 +1,46 @@
+<div class="row" *ngIf="records && records.length > 0">
+  <h1>{{records[0].plateNumber}} - {{records[0].vin}}</h1>
+</div>
+<div class="row" *ngIf="records">
+  <table class="table  table-fixed table-striped">
+    <thead>
+    <tr>
+      <th class="{{view}}">Gefahrene Kilometer</th>
+      <th class="{{view}}">Restliche Tankfüllung</th>
+      <th class="{{view}} fleetheader">Gewicht</th>
+      <th class="{{view}} fleetheader">Wassertemp.</th>
+      <th class="{{view}} fleetheader">Öltemp.</th>
+      <th class="{{view}} fleetheader">Motorlaufzeit</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let record of records">
+      <td class="{{view}}">{{record.distance}} km</td>
+      <td class="{{view}}">{{record.remainingFuel | number}} l</td>
+      <td class="{{view}} fleet">{{record.weight}} kg</td>
+      <td class="{{view}} fleet">{{record.waterTemp | number}} °C</td>
+      <td class="{{view}} fleet">{{record.oilTemp | number}} °C</td>
+      <td class="{{view}} fleet">{{record.motorRunningTime | number}}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+<div *ngIf="records && lat && lng" class="row">
+  <div class="col-xl-6">
+    <h2>Letzter Standort</h2>
+    <agm-map [latitude]="lat" [longitude]="lng" [zoom]="12" [zoomControl]="false" [scrollwheel]="false"
+             [streetViewControl]="false">
+      <agm-marker [latitude]="lat" [longitude]="lng"></agm-marker>
+    </agm-map>
+  </div>
+  <div class="col-xl-6">
+    <h2>Gefahrene Kilometer</h2>
+    <div class="chart" *ngIf="records">
+      <canvas baseChart [datasets]="lineChartData" [labels]="lineChartLabels" [options]="lineChartOptions"
+              [colors]="lineChartColors" [legend]="lineChartLegend" [chartType]="lineChartType"
+              class="chartcanvas"></canvas>
+    </div>
+  </div>
+
+</div>
+

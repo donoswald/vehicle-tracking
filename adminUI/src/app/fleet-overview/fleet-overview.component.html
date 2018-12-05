@@ -1,0 +1,34 @@
+<div class="row">
+  <app-fleet-name></app-fleet-name>
+</div>
+<div class="row">
+  <table class="table table-fixed table-hover table-striped">
+    <thead>
+    <tr>
+      <th>Zulassung</th>
+      <th>Fahrgestellnummer</th>
+      <th>Gefahrene Kilometer</th>
+      <th>Restliche Tankfüllung</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let record of records" (click)="onClick(record)">
+      <td>{{record.plateNumber}}</td>
+      <td>{{record.vin}}</td>
+      <td>{{record.distance}} km</td>
+      <td>{{record.remainingFuel | number}} l</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+<div class="row" *ngIf="records">
+  <div class="col-xl-12">
+    <h2>Standorte der Fahrzeuge</h2>
+    <agm-map [latitude]="records[0].lat" [longitude]="records[0].lon" [zoom]="6" [mapDraggable]="true"
+             [streetViewControl]="false">
+      <agm-marker *ngFor="let record of records" [latitude]="record.lat" [longitude]="record.lon">
+        <agm-info-window>VIN: {{record.vin}} <br>Plate {{record.plateNumber}}</agm-info-window>
+      </agm-marker>
+    </agm-map>
+  </div>
+</div>

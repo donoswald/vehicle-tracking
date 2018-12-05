@@ -1,0 +1,10 @@
+<div class="row align-content-center">
+  <div class="align-content-center">
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <label><p>Benutzername</p><input type="text" class="form-control" formControlName="username"></label>
+      <br>
+      <label><p>Passwort</p><input type="password" class="form-control" formControlName="password"></label>
+      <input type="submit" class="form-control btn-primary">
+    </form>
+  </div>
+</div>
