@@ -32,7 +32,7 @@ import {LoggingInterceptor} from './interceptor/logging-interceptor';
     HttpClientModule,
     ChartsModule,
     AgmCoreModule.forRoot({
-      apiKey: 'AIzaSyCoGcLJLB58G-zS70d03W0FQn7DmxNv194'
+      apiKey: //TODO: insert google api key here
     })
   ],
   providers: [
