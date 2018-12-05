@@ -27,6 +27,7 @@ We have two companies with a common trusted ledger. The logicstic company is pro
 ## Project Modules
 
 I started to implement this showcase using Hyperledger Fabric and its Java SDK. My approach was to divide the showcase up into four modules
+
 ![Alt text](./vehicla-tracking-overview.png)
 
 **Infrastructure** - the infrastructure module provides a set of containers which represent the organisational structure and technical needed components of the whole usecase. 
@@ -124,7 +125,27 @@ gradle run --args='vin123'
 14:15:41.859 [main] INFO trivadis.vehicle.Vehicle - response code 200
 ```
 
+##Conclusion
 
+Implementing a whole show case with Hyperledger Fabric (HF) was quite a deep dive into blockchain and the architecture of HF. There are quite some features which are not standard on a public blockchain like Ethereum or EOS such as *Private Data* and *Identity* Mixer (Zero Knowledge Proof of Identity). 
+HF is quite mature when it comes to 
+
+- Set up a small test network (two organisations and a orderer)
+- Implement a smart contract (chaincode) in Java
+- Generate all the public/private keys for the organisational structure
+
+There are also usefull tools like HF Composer and different SAS solutions for the infrastructure part, but the focus of my work was, beside having the showcase, also to gain knowledger of the technical part especially implement as much as possible with Java.
+
+It was straight forward to implement the chaincode and access the ledger through the Java SDK, but I had some difficuties to set up a Channel and access it using the SDK.  Frankly the process to set up a channel is far too cumbersome
+
+- create a configtx.yml configuration file
+- generate the artifact using configtxgen tool
+- reading that artifact into the backend (SDK)
+- creating the channel on the peers (using the SDK)
+
+It should be far more easy to create a channel on selected peers. Setting up a new channel using the SDK should be an issue of some few lines of code.
+
+Overall I think the HF is a great tool when it comes to implement a blockchain in an enterprise or setting up a new portal.
 
 
 
