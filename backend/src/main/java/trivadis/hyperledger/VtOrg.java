@@ -34,137 +34,17 @@ public class VtOrg {
     private User user;
     private HFClient client = HFClient.createNewInstance();
 
-    public VtOrg(String name, String mspid) {
+    VtOrg(String name, String mspid) {
         this.name = name;
         this.mspid = mspid;
-        try{
+        try {
             client.setCryptoSuite(CryptoSuite.Factory.getCryptoSuite());
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public String getCAName() {
-        return caName;
-    }
-
-    public void setCAName(String caName) {
-        this.caName = caName;
-    }
-
-
-    public String getMSPID() {
-        return mspid;
-    }
-
-    public String getCALocation() {
-        return this.caLocation;
-    }
-
-    public void setCALocation(String caLocation) {
-        this.caLocation = caLocation;
-    }
-
-    public void addPeerLocation(String name, String location) {
-
-        peerLocations.put(name, location);
-    }
-
-    public void addOrdererLocation(String name, String location) {
-
-        ordererLocations.put(name, location);
-    }
-
-    public String getPeerLocation(String name) {
-        return peerLocations.get(name);
-
-    }
-
-    public String getOrdererLocation(String name) {
-        return ordererLocations.get(name);
-
-    }
-
-    public String getEventHubLocation(String name) {
-        return eventHubLocations.get(name);
-
-    }
-
-    public Set<String> getPeerNames() {
-
-        return Collections.unmodifiableSet(peerLocations.keySet());
-    }
-
-    public Set<String> getOrdererNames() {
-
-        return Collections.unmodifiableSet(ordererLocations.keySet());
-    }
-
-    public Set<String> getEventHubNames() {
-
-        return Collections.unmodifiableSet(eventHubLocations.keySet());
-    }
-
-    public HFCAClient getCAClient() {
-
-        return caClient;
-    }
-
-    public void setCAClient(HFCAClient caClient) {
-        this.caClient = caClient;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Properties getCAProperties() {
-        return caProperties;
-    }
-
-    public String getDomainName() {
-        return domainName;
-    }
-
-    public void setDomainName(String domainName) {
-        this.domainName = domainName;
-    }
-
-    public User getCaAdmin() {
-        return caAdmin;
-    }
-
-    public void setCaAdmin(User caAdmin) {
-        this.caAdmin = caAdmin;
-    }
-
-    public User getOrgAdmin() {
-        return orgAdmin;
-    }
-
-    public void setOrgAdmin(User orgAdmin) {
-        this.orgAdmin = orgAdmin;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-        try{
-            this.client.setUserContext(user);
-        }catch (Exception e){
-            throw new RuntimeException(e);
-        }
-
-    }
-
-    public HFClient getClient() {
-        return client;
-    }
-
-    public static CAEnrollment getEnrollment(File keyFile, File certFile)
+    static CAEnrollment getEnrollment(File keyFile, File certFile)
             throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
 
         try (InputStream is = new FileInputStream(keyFile);
@@ -189,11 +69,130 @@ public class VtOrg {
         }
     }
 
+    String getCAName() {
+        return caName;
+    }
+
+    void setCAName(String caName) {
+        this.caName = caName;
+    }
+
+    String getMSPID() {
+        return mspid;
+    }
+
+    String getCALocation() {
+        return this.caLocation;
+    }
+
+    void setCALocation(String caLocation) {
+        this.caLocation = caLocation;
+    }
+
+    void addPeerLocation(String name, String location) {
+
+        peerLocations.put(name, location);
+    }
+
+    void addOrdererLocation(String name, String location) {
+
+        ordererLocations.put(name, location);
+    }
+
+    String getPeerLocation(String name) {
+        return peerLocations.get(name);
+
+    }
+
+    String getOrdererLocation(String name) {
+        return ordererLocations.get(name);
+
+    }
+
+    String getEventHubLocation(String name) {
+        return eventHubLocations.get(name);
+
+    }
+
+    Set<String> getPeerNames() {
+
+        return Collections.unmodifiableSet(peerLocations.keySet());
+    }
+
+    Set<String> getOrdererNames() {
+
+        return Collections.unmodifiableSet(ordererLocations.keySet());
+    }
+
+    Set<String> getEventHubNames() {
+
+        return Collections.unmodifiableSet(eventHubLocations.keySet());
+    }
+
+    HFCAClient getCAClient() {
+
+        return caClient;
+    }
+
+    void setCAClient(HFCAClient caClient) {
+        this.caClient = caClient;
+    }
+
+    String getName() {
+        return name;
+    }
+
+    Properties getCAProperties() {
+        return caProperties;
+    }
+
+    String getDomainName() {
+        return domainName;
+    }
+
+    void setDomainName(String domainName) {
+        this.domainName = domainName;
+    }
+
+    User getCaAdmin() {
+        return caAdmin;
+    }
+
+    void setCaAdmin(User caAdmin) {
+        this.caAdmin = caAdmin;
+    }
+
+    public User getOrgAdmin() {
+        return orgAdmin;
+    }
+
+    void setOrgAdmin(User orgAdmin) {
+        this.orgAdmin = orgAdmin;
+    }
+
+    User getUser() {
+        return user;
+    }
+
+    void setUser(User user) {
+        this.user = user;
+        try {
+            this.client.setUserContext(user);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public HFClient getClient() {
+        return client;
+    }
+
     static class CAEnrollment implements Enrollment, Serializable {
         private PrivateKey key;
         private String cert;
 
-        public CAEnrollment(PrivateKey pkey, String signedPem) {
+        CAEnrollment(PrivateKey pkey, String signedPem) {
             this.key = pkey;
             this.cert = signedPem;
         }

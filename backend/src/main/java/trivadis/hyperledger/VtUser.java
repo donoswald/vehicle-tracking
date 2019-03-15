@@ -8,22 +8,22 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-public class VtUser implements User {
+class VtUser implements User {
     private String name;
     private Set<String> roles = new HashSet<>();
     private String account;
     private String affiliation;
-    private  String enrollmentSecret;
+    private String enrollmentSecret;
     private Enrollment enrollment;
     private String mspId;
 
-    public VtUser(String name) {
-        this.name=name;
+    VtUser(String name) {
+        this.name = name;
     }
 
-    public VtUser(HFCAIdentity identity) {
-        this.name=identity.getEnrollmentId();
-        this.affiliation=identity.getAffiliation();
+    VtUser(HFCAIdentity identity) {
+        this.name = identity.getEnrollmentId();
+        this.affiliation = identity.getAffiliation();
     }
 
     @Override
@@ -31,7 +31,7 @@ public class VtUser implements User {
         return name;
     }
 
-    public void setName(String name) {
+    void setName(String name) {
         this.name = name;
     }
 
@@ -40,7 +40,7 @@ public class VtUser implements User {
         return Collections.unmodifiableSet(roles);
     }
 
-    public void setRoles(Set<String> roles) {
+    void setRoles(Set<String> roles) {
         this.roles = new HashSet<>(roles);
     }
 
@@ -49,7 +49,7 @@ public class VtUser implements User {
         return account;
     }
 
-    public void setAccount(String account) {
+    void setAccount(String account) {
         this.account = account;
     }
 
@@ -58,7 +58,7 @@ public class VtUser implements User {
         return affiliation;
     }
 
-    public void setAffiliation(String affiliation) {
+    void setAffiliation(String affiliation) {
         this.affiliation = affiliation;
     }
 
@@ -67,7 +67,7 @@ public class VtUser implements User {
         return enrollment;
     }
 
-    public void setEnrollment(Enrollment enrollment) {
+    void setEnrollment(Enrollment enrollment) {
         this.enrollment = enrollment;
     }
 
@@ -76,15 +76,15 @@ public class VtUser implements User {
         return mspId;
     }
 
-    public void setMspId(String mspId) {
+    void setMspId(String mspId) {
         this.mspId = mspId;
     }
 
-    public String getEnrollmentSecret() {
+    String getEnrollmentSecret() {
         return enrollmentSecret;
     }
 
-    public void setEnrollmentSecret(String enrollmentSecret) {
+    void setEnrollmentSecret(String enrollmentSecret) {
         this.enrollmentSecret = enrollmentSecret;
     }
 }
