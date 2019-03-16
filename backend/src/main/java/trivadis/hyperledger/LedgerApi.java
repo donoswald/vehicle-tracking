@@ -11,10 +11,15 @@ import java.util.concurrent.TimeUnit;
 import static trivadis.hyperledger.SdkConfig.chaincodeID;
 
 public class LedgerApi {
+
+    private static final Initializer initializer = Initializer.instance();
+
     private static final Logger log = LoggerFactory.getLogger(LedgerApi.class);
     private static final SdkConfig sdkConfig = SdkConfig.instance();
+    private static LedgerApi INSTANCE;
 
-    private static final Initializer initializer = new Initializer();
+    private LedgerApi() {
+    }
 
     public String getHistory(HFClient client,String vin) {
         try {
@@ -110,5 +115,13 @@ public class LedgerApi {
         }
 
     }
+
+    public static LedgerApi instance() {
+        if (INSTANCE == null) {
+            INSTANCE = new LedgerApi();
+        }
+        return INSTANCE;
+    }
+
 
 }

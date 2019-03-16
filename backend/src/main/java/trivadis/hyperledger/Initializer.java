@@ -20,114 +20,20 @@ import static trivadis.hyperledger.SdkConfig.*;
 
 public class Initializer {
 
+    private static Initializer INSTANCE;
+
     private static final String CHANNEL_NAME = "foo";
 
     private static final Logger log = LoggerFactory.getLogger(Initializer.class);
     private static final SdkConfig sdkConfig = SdkConfig.instance();
     private static boolean installed = false;
 
-    private HFClient client = HFClient.createNewInstance();
+    private HFClient client = null;
     private Channel channel = null;
 
-    public Initializer() {
+    private Initializer() {
         init();
     }
-
-    private void init() {
-        try {
-
-
-            createUsersAndOrgs();
-
-            client.setCryptoSuite(CryptoSuite.Factory.getCryptoSuite());
-            // use the admin of the first org (org1)
-            client.setUserContext(sdkConfig.getOrganisations().get(0).getOrgAdmin());
-
-            channel = constructChannel(CHANNEL_NAME, client);
-            if (!installed) {
-                install(client, channel);
-                instantiate(client, channel);
-            }
-
-        } catch (Exception e) {
-            log.error("error", e);
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static void instantiate(HFClient client, Channel channel) {
-
-        try {
-
-
-            final ChaincodeID chaincodeID = ChaincodeID.newBuilder().setName(CHAIN_CODE_NAME)
-                    .setVersion(CHAIN_CODE_VERSION).build();
-
-            ///////////////
-            //// Instantiate chaincode.
-            InstantiateProposalRequest request = client.newInstantiationProposalRequest();
-            request.setProposalWaitTime(sdkConfig.getDeployWaitTime());
-            request.setChaincodeID(chaincodeID);
-            request.setChaincodeLanguage(TransactionRequest.Type.JAVA);
-            request.setFcn("init");
-            request.setArgs(new String[0]);
-
-            ChaincodeEndorsementPolicy policy = new ChaincodeEndorsementPolicy();
-            policy.fromYamlFile(new File(NETWORK_PATH + "/chaincodeendorsementpolicy.yaml"));
-            request.setChaincodeEndorsementPolicy(policy);
-
-            Collection<ProposalResponse> successful = new LinkedList<>();
-            Collection<ProposalResponse> responses = channel.sendInstantiationProposal(request, channel.getPeers());
-            for (ProposalResponse response : responses) {
-                if (response.getStatus() == ProposalResponse.Status.SUCCESS) {
-                    successful.add(response);
-                } else {
-                    log.error("unsuccessful respons {}", response);
-                    throw new RuntimeException("error instantiating chaincode: " + response);
-                }
-            }
-
-            ///////////////
-            /// Send instantiate transaction to orderer
-            BlockEvent.TransactionEvent transactionEvent = channel.sendTransaction(successful, createTransactionOptions() //Basically the default options but shows it's usage.
-                    .userContext(client.getUserContext()) //could be a different user context. this is the default.
-                    .shuffleOrders(false) // don't shuffle any orderers the default is true.
-                    .orderers(channel.getOrderers()) // specify the orderers we want to try this transaction. Fails once all Orderers are tried.
-            ).get();
-
-            log.info("successfully instantiated chaincode {}", transactionEvent);
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-    }
-
-    private static void install(HFClient client, Channel channel) {
-        try {
-            ChaincodeID chaincodeID = ChaincodeID.newBuilder().setName(CHAIN_CODE_NAME).setVersion(CHAIN_CODE_VERSION).build();
-
-            InstallProposalRequest request = client.newInstallProposalRequest();
-            request.setChaincodeID(chaincodeID);
-            request.setChaincodeSourceLocation(Paths.get(CHAINCODE_PATH, CHAIN_CODE_FILEPATH).toFile());
-            request.setChaincodeVersion(CHAIN_CODE_VERSION);
-            request.setChaincodeLanguage(TransactionRequest.Type.JAVA);
-
-            Collection<Peer> peers = channel.getPeers();
-
-            Collection<ProposalResponse> responses = client.sendInstallProposal(request, peers);
-
-            for (ProposalResponse response : responses) {
-                if (response.getStatus() != ProposalResponse.Status.SUCCESS) {
-                    throw new RuntimeException("error installing chaincode: " + response.getMessage());
-                }
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-    }
-
 
     private static Channel constructChannel(String name, HFClient client) {
 
@@ -205,6 +111,86 @@ public class Initializer {
         }
     }
 
+    private static void instantiate(HFClient client, Channel channel) {
+
+        try {
+
+
+            final ChaincodeID chaincodeID = ChaincodeID.newBuilder().setName(CHAIN_CODE_NAME)
+                    .setVersion(CHAIN_CODE_VERSION).build();
+
+            ///////////////
+            //// Instantiate chaincode.
+            InstantiateProposalRequest request = client.newInstantiationProposalRequest();
+            request.setProposalWaitTime(sdkConfig.getDeployWaitTime());
+            request.setChaincodeID(chaincodeID);
+            request.setChaincodeLanguage(TransactionRequest.Type.JAVA);
+            request.setFcn("init");
+            request.setArgs(new String[0]);
+
+            ChaincodeEndorsementPolicy policy = new ChaincodeEndorsementPolicy();
+            policy.fromYamlFile(new File(NETWORK_PATH + "/chaincodeendorsementpolicy.yaml"));
+            request.setChaincodeEndorsementPolicy(policy);
+
+            Collection<ProposalResponse> successful = new LinkedList<>();
+            Collection<ProposalResponse> responses = channel.sendInstantiationProposal(request, channel.getPeers());
+            for (ProposalResponse response : responses) {
+                if (response.getStatus() == ProposalResponse.Status.SUCCESS) {
+                    successful.add(response);
+                } else {
+                    log.error("unsuccessful respons {}", response);
+                    throw new RuntimeException("error instantiating chaincode: " + response);
+                }
+            }
+
+            ///////////////
+            /// Send instantiate transaction to orderer
+            BlockEvent.TransactionEvent transactionEvent = channel.sendTransaction(successful, createTransactionOptions()
+                    .userContext(client.getUserContext())
+                    .shuffleOrders(false)
+                    .orderers(channel.getOrderers())
+            ).get();
+
+            log.info("successfully instantiated chaincode {}", transactionEvent);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public static Initializer instance() {
+        if (INSTANCE == null) {
+            INSTANCE = new Initializer();
+        }
+        return INSTANCE;
+    }
+
+    private static void install(HFClient client, Channel channel) {
+        try {
+            ChaincodeID chaincodeID = ChaincodeID.newBuilder().setName(CHAIN_CODE_NAME).setVersion(CHAIN_CODE_VERSION).build();
+
+            InstallProposalRequest request = client.newInstallProposalRequest();
+            request.setChaincodeID(chaincodeID);
+            request.setChaincodeSourceLocation(Paths.get(CHAINCODE_PATH, CHAIN_CODE_FILEPATH).toFile());
+            request.setChaincodeVersion(CHAIN_CODE_VERSION);
+            request.setChaincodeLanguage(TransactionRequest.Type.JAVA);
+
+            Collection<Peer> peers = channel.getPeers();
+
+            Collection<ProposalResponse> responses = client.sendInstallProposal(request, peers);
+
+            for (ProposalResponse response : responses) {
+                if (response.getStatus() != ProposalResponse.Status.SUCCESS) {
+                    throw new RuntimeException("error installing chaincode: " + response.getMessage());
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
 
     private static void createUsersAndOrgs() {
         try {
@@ -268,6 +254,29 @@ public class Initializer {
 
         } catch (Exception e) {
              throw new RuntimeException(e);
+        }
+    }
+
+    private void init() {
+        try {
+
+
+            createUsersAndOrgs();
+            client = HFClient.createNewInstance();
+
+            client.setCryptoSuite(CryptoSuite.Factory.getCryptoSuite());
+            // use the admin of the first org (org1)
+            client.setUserContext(sdkConfig.getOrganisations().get(0).getOrgAdmin());
+
+            channel = constructChannel(CHANNEL_NAME, client);
+            if (!installed) {
+                install(client, channel);
+                instantiate(client, channel);
+            }
+
+        } catch (Exception e) {
+            log.error("error", e);
+            throw new RuntimeException(e);
         }
     }
 

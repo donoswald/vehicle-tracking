@@ -5,19 +5,17 @@
  */
 package trivadis.simpleserver;
 
+import com.sun.net.httpserver.BasicAuthenticator;
+import com.sun.net.httpserver.HttpServer;
+import trivadis.handlers.InfoHandler;
+import trivadis.handlers.VehicleHandler;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import com.sun.net.httpserver.BasicAuthenticator;
-import com.sun.net.httpserver.HttpServer;
-
-import trivadis.handlers.InfoHandler;
-import trivadis.handlers.VehicleHandler;
-import trivadis.hyperledger.LedgerApi;
 
 /**
  *
@@ -27,8 +25,8 @@ public class ServerStarter {
 
 	private static final Logger LOG = Logger.getLogger(ServerStarter.class.getName());
 
-	private static final LedgerApi api  =new LedgerApi();
-	private static HttpServer server;
+	private ServerStarter() {
+	}
 
 	public static void main(final String[] args) {
 		int port = 9090;
@@ -40,7 +38,7 @@ public class ServerStarter {
 		}
 		try {
 			final ExecutorService executor = Executors.newFixedThreadPool(5);
-			server = HttpServer.create(new InetSocketAddress(port), 0);
+			HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
 			server.setExecutor(executor);
 
 			server.createContext("/info", new InfoHandler()).setAuthenticator(new BasicAuthenticator("INFO") {
@@ -52,7 +50,7 @@ public class ServerStarter {
 					return false;
 				}
 			});
-			server.createContext("/" + VehicleHandler.HANDLER_URL, new VehicleHandler(api))
+			server.createContext("/" + VehicleHandler.HANDLER_URL, new VehicleHandler())
 					.setAuthenticator(new VehicleBasicAuthenficator("VEHICLES"));
 
 			server.start();

@@ -8,6 +8,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SdkConfig {
+    private static SdkConfig INSTANCE;
+
     static final String CHAIN_CODE_NAME = "VEHICLE_TRACKING_CC";
     static final String CHAIN_CODE_VERSION = "1";
     static final String CHAINCODE_PATH = "chaincode";
@@ -40,7 +42,7 @@ public class SdkConfig {
     static final String INVOKEWAITTIME = PROPBASE + "InvokeWaitTime";
     private static final String INTEGRATIONTESTS_ORG = PROPBASE + "integrationTests.org.";
     private static final Pattern orgPat = Pattern.compile("^" + Pattern.quote(INTEGRATIONTESTS_ORG) + "([^\\.]+)\\.mspid$");
-    private static SdkConfig INSTANCE;
+
     private final HashMap<String, VtOrg> organisations = new HashMap<>();
     private final Properties sdkProperties = new Properties();
 

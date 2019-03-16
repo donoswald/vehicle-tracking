@@ -20,16 +20,20 @@ import java.util.Scanner;
 
 public class VehicleHandler implements HttpHandler {
     private static final Logger log = LoggerFactory.getLogger(VehicleHandler.class.getName());
+
+    private static final LedgerApi api = LedgerApi.instance();
+    private static final ObjectMapper om = new CustomObjectMapper();
+
     public static final String ORG1 = "InsuraAG";
     public static final String ORG2 = "PlanetExpress";
+
     public final static String HANDLER_URL = "vehicles";
     private static final String INSERT_PATH = "insert";
-    private final ObjectMapper om = new CustomObjectMapper();
-    private final LedgerApi api;
+
+
     private Map<String, HFClient> clients = new HashMap<>();
 
-    public VehicleHandler(LedgerApi api) {
-        this.api = api;
+    public VehicleHandler() {
         clients.put(ORG1,SdkConfig.instance().getOrganisation("peerOrg1").getClient());
         clients.put(ORG2,SdkConfig.instance().getOrganisation("peerOrg2").getClient());
     }
@@ -45,7 +49,7 @@ public class VehicleHandler implements HttpHandler {
         String path = exchange.getRequestURI().getPath().replaceFirst(".*/([^/?]+).*", "$1");
         log.info("Serving path " + path);
         exchange.getResponseHeaders().add("Content-Type", "application/json, charset=UTF-8");
-        exchange.sendResponseHeaders(200, 0);// response code and length
+        exchange.sendResponseHeaders(200, 0);
 
         OutputStream out = exchange.getResponseBody();
         if (HANDLER_URL.equals(path)) {
